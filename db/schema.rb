@@ -19,8 +19,9 @@ ActiveRecord::Schema.define(version: 20180103024622) do
   create_table "web_contents_tables", force: :cascade do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "url",        null: false
+    t.text     "url",         null: false
     t.text     "content"
+    t.integer  "status_code", null: false
   end
 
 end

@@ -4,6 +4,7 @@ class CreateWebContentsTable < ActiveRecord::Migration
       t.timestamps
       t.text :url, null: false
       t.text :content, null: true
+      t.integer :status_code, null: false
     end
   end
 end
