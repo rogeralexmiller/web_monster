@@ -2,8 +2,8 @@ require 'test_helper'
 
 class WebContentTest < ActiveSupport::TestCase
   setup do
-    @null_url = web_contents(:null_url)
-    @bad_url = web_contents(:bad_url)
+    @null_url = WebContent.new(url: nil)
+    @bad_url = WebContent.new(url: "htt://ww.badsite.com")
     @good_url = web_contents(:one)
   end
 

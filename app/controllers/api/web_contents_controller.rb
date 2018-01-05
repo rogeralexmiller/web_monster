@@ -2,15 +2,14 @@ class Api::WebContentsController < ApplicationController
   require 'open-uri'
   require 'net/http'
   # encoding: utf-8
-  before_action :verify_url, :set_content, only: [:create]
+  before_action :set_variables, :verify_url, only: [:create]
 
   def index
     @web_contents = WebContent.all
   end
 
   def create
-    raw_url = params[:url]
-    uri = URI(raw_url)
+    uri = URI(@url)
     @response = Net::HTTP.get_response(uri)
 
     handle_response
@@ -18,8 +17,9 @@ class Api::WebContentsController < ApplicationController
 
   private
 
-  def set_content
+  def set_variables
     @content = ""
+    @url = params[:url] || ""
   end
 
   def handle_response
@@ -37,7 +37,7 @@ class Api::WebContentsController < ApplicationController
   end
 
   def save_content
-    WebContent.create(url: params[:url], content: @content.force_encoding('UTF-8').encode('UTF-8', invalid: :replace, undef: :replace, replace: ''))
+    WebContent.create(url: @url, content: @content.force_encoding('UTF-8').encode('UTF-8', invalid: :replace, undef: :replace, replace: ''))
   end
 
   def parse_response
@@ -63,7 +63,7 @@ class Api::WebContentsController < ApplicationController
   end
 
   def verify_url
-    unless params[:url].starts_with?('https://www') || params[:url].starts_with?('http://www')
+    unless @url.starts_with?('https://www') || @url.starts_with?('http://www')
       render json: { message: "Bad format. Url must start with valid protocol like 'https://www'. Try again"}, status: 400
       return
     end

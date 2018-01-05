@@ -6,7 +6,7 @@
 #
 one: {
   url: "https://www.nytimes.com",
-  content: "news content"
+  content: "news news news"
 }
 # column: value
 #
@@ -15,14 +15,14 @@ two: {
   content: "googleness"
 }
 
-null_url: {
-  url: "",
-  content: ""
+three: {
+  url: "https://www.dogs.com",
+  content: "bark bark bark"
 }
 
-bad_url: {
-  url: "google.com",
-  content: ""
+four: {
+  url: "https://www.cats.com",
+  content: "meow meow meow"
   }
 
 #  column: value
