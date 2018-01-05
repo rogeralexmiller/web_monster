@@ -4,8 +4,25 @@
 # model remove the '{}' from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
-one: {}
+one: {
+  url: "https://www.nytimes.com",
+  content: "news content"
+}
 # column: value
 #
-two: {}
+two: {
+  url: "https://www.google.com",
+  content: "googleness"
+}
+
+null_url: {
+  url: "",
+  content: ""
+}
+
+bad_url: {
+  url: "google.com",
+  content: ""
+  }
+
 #  column: value
