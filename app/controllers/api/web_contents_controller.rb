@@ -62,8 +62,8 @@ class Api::WebContentsController < ApplicationController
   end
 
   def verify_url
-    unless /http[s]?:\/\/www/ =~ @url
-      render json: { message: "Bad format. Url must start with valid protocol like 'https://www'. Try again" }, status: 400
+    unless /^http[s]?:\/\// =~ @url
+      render json: { message: "Bad format. Url must start with valid protocol like 'https://'" }, status: 400
       return
     end
   end
