@@ -4,8 +4,6 @@ class Api::WebContentsController < ApplicationController
 
   before_action :set_variables, :verify_url, only: [:create]
 
-  ERROR_MESSAGE = "Couldn't fetch or parse web page.".freeze
-
   def index
     @web_contents = WebContent.all
   end
@@ -62,8 +60,8 @@ class Api::WebContentsController < ApplicationController
   end
 
   def verify_url
-    unless /^http[s]?:\/\// =~ @url
-      render json: { message: "Bad format. Url must start with valid protocol like 'https://'" }, status: 400
+    unless /\Ahttp[s]?:\/\// =~ @url
+      render json: { message: "Bad protocol. Url must start with valid protocol like 'https://'" }, status: 400
       return
     end
   end
