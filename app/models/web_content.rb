@@ -1,4 +1,4 @@
 class WebContent < ActiveRecord::Base
   validates :url, presence: true, allow_nil: false
-  validates :url, format: URI::regexp(%w(http https))
+  validates_format_of :url, with: /http[s]?:\/\/www/i
 end
