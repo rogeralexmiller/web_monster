@@ -19,9 +19,19 @@ class Api::WebContentsControllerTest < ActionController::TestCase
     end
   end
 
-  test "should return 400 when invalid or non-existent url is passed" do
+  test "should return 400 with message when non-existent url is passed" do
     form = { url: "https://www.fakewebsite3838429sljdlkfjlsflskdla" }
     post "create", "api/web_contents", form, format: 'json'
     assert_response 400
+    body = JSON.parse(response.body)
+    assert body['message'] == "Couldn't fetch or parse web page."
+  end
+
+  test "should return 400 with different message when malformed url is passed" do
+    form = { url: "hcci://definitely_fake.com" }
+    post "create", "api/web_contents", form, format: 'json'
+    assert_response 400
+    body = JSON.parse(response.body)
+    assert body['message'] == "Bad format. Url must start with valid protocol like 'https://'"
   end
 end
