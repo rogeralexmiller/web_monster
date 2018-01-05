@@ -32,6 +32,6 @@ class Api::WebContentsControllerTest < ActionController::TestCase
     post "create", "api/web_contents", form, format: 'json'
     assert_response 400
     body = JSON.parse(response.body)
-    assert body['message'] == "Bad format. Url must start with valid protocol like 'https://'"
+    assert body['message'] == "Bad protocol. Url must start with valid protocol like 'https://'"
   end
 end
