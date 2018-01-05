@@ -1,43 +1,42 @@
 class Api::WebContentsController < ApplicationController
   require 'open-uri'
   require 'net/http'
-  # encoding: utf-8
+
   before_action :set_variables, :verify_url, only: [:create]
+
+  ERROR_MESSAGE = "Couldn't fetch or parse web page.".freeze
 
   def index
     @web_contents = WebContent.all
   end
 
   def create
-    uri = URI(@url)
-    @response = Net::HTTP.get_response(uri)
+    @response = Net::HTTP.get_response(URI(@url))
 
-    handle_response
+    if successful_response?
+      render json: { message: "success" }, status: 200
+    else
+      error_response
+    end
+
+  rescue
+    error_response
   end
 
   private
 
-  def set_variables
-    @content = ""
-    @url = params[:url] || ""
-  end
-
-  def handle_response
-    if successful_response?
-      parse_response
-      save_content
-
-      render json: { message: "success" }, status: 200
-    else
-      render json: { message: "Couldn't fetch web page." }, status: 400
-    end
-
-  rescue
-    render json: { content: @content, message: "Couldn't parse web page." }, status: 500
+  def error_response
+    render json: { message: "Couldn't fetch or parse web page." }, status: 400
   end
 
   def save_content
-    WebContent.create(url: @url, content: @content.force_encoding('UTF-8').encode('UTF-8', invalid: :replace, undef: :replace, replace: ''))
+    WebContent.new(url: @url, content: encoded_content).save
+  end
+
+  def encoded_content
+    @content.force_encoding('UTF-8').encode('UTF-8', invalid: :replace,
+                                                     undef: :replace,
+                                                     replace: ' ')
   end
 
   def parse_response
@@ -59,13 +58,18 @@ class Api::WebContentsController < ApplicationController
   end
 
   def successful_response?
-    @response.is_a?(Net::HTTPSuccess)
+    @response.is_a?(Net::HTTPSuccess) && parse_response && save_content
   end
 
   def verify_url
-    unless @url.starts_with?('https://www') || @url.starts_with?('http://www')
-      render json: { message: "Bad format. Url must start with valid protocol like 'https://www'. Try again"}, status: 400
+    unless /http[s]?:\/\/www/ =~ @url
+      render json: { message: "Bad format. Url must start with valid protocol like 'https://www'. Try again" }, status: 400
       return
     end
+  end
+
+  def set_variables
+    @content = ""
+    @url = params[:url] || ""
   end
 end
