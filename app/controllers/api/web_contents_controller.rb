@@ -29,9 +29,15 @@ class Api::WebContentsController < ApplicationController
 
     handle_response
 
-  rescue HTTParty::Error
+  rescue HTTParty::Error => e
+    Rails.logger.error("HTTParty failed to fetch url #{@url}")
+    Rails.logger.error(e)
     @success = false
-    @message = "Unknown error occurred. Unable to fetch url"
+    @message = "Unable to fetch url"
+
+  rescue Errno::ECONNREFUSED => e
+    @success = false
+    @message = "Connection refused. Try a different url."
   end
 
   def handle_response
@@ -40,7 +46,7 @@ class Api::WebContentsController < ApplicationController
         parse_response
       when 404
         @success = false
-        @message = "No content found at that url."
+        @message = "Missing page responded 404: No content found at that url."
       when 500...600
         @success = false
         @message = "Url responding with server error."
@@ -61,7 +67,7 @@ class Api::WebContentsController < ApplicationController
     Rails.logger.error("Failed to parse content at url: #{@url}")
     Rails.logger.error(e)
     @success = false
-    @message = "Unable to parse content at url."
+    @message = "Unable to parse content at that url."
   end
 
   def save_content
